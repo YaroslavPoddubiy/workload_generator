@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>785</width>
-    <height>475</height>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,6 +25,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QRadioButton" name="chooseDatasetRadioButton">
+           <property name="toolTip">
+            <string>Виберіть цей параметр, щоб завантажити конфігурацію з існуючого CSV-файлу датасету.</string>
+           </property>
            <property name="text">
             <string>Датасет:</string>
            </property>
@@ -34,6 +37,9 @@
           <widget class="QLineEdit" name="chooseDatasetLineEdit">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Шлях до CSV-файлу датасету, який буде використано для налаштування моделі Маркова.</string>
            </property>
            <property name="text">
             <string>datasets/workload_dataset/workload.csv</string>
@@ -45,6 +51,9 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="toolTip">
+            <string>Відкрити діалогове вікно для вибору CSV-файлу датасету.</string>
+           </property>
            <property name="text">
             <string>Огляд...</string>
            </property>
@@ -54,6 +63,9 @@
           <widget class="QPushButton" name="plotDatasetButton">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Побудувати графік завантаженого датасету для попереднього перегляду.</string>
            </property>
            <property name="text">
             <string>Побудувати графік</string>
@@ -66,6 +78,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QRadioButton" name="chooseConfigRadioButton">
+           <property name="toolTip">
+            <string>Виберіть цей параметр, щоб завантажити існуючу конфігурацію моделі Маркова з JSON-файлу.</string>
+           </property>
            <property name="text">
             <string>Конфігураційний файл</string>
            </property>
@@ -79,6 +94,9 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="toolTip">
+            <string>Шлях до JSON-файлу, що містить конфігурацію моделі Маркова.</string>
+           </property>
            <property name="text">
             <string>middle_config.json</string>
            </property>
@@ -88,6 +106,9 @@
           <widget class="QPushButton" name="chooseConfigButton">
            <property name="enabled">
             <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Відкрити діалогове вікно для вибору JSON-файлу конфігурації.</string>
            </property>
            <property name="text">
             <string>Огляд...</string>
@@ -107,6 +128,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QLabel" name="label">
+         <property name="toolTip">
+          <string>Виберіть індекс мікросервісу для відображення його часового ряду.</string>
+         </property>
          <property name="text">
           <string>Виберіть номер мікросервісу:</string>
          </property>
@@ -114,6 +138,9 @@
        </item>
        <item>
         <widget class="QComboBox" name="microserviceNumberComboBox">
+         <property name="toolTip">
+          <string>Список з індексами згенерованих мікросервісів.</string>
+         </property>
          <property name="currentIndex">
           <number>-1</number>
          </property>
@@ -123,6 +150,9 @@
         <widget class="QPushButton" name="plotButton">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Побудувати графік часового ряду вибраного мікросервісу.</string>
          </property>
          <property name="text">
           <string>Побудувати графік</string>
@@ -136,6 +166,9 @@
      <widget class="QPushButton" name="generateButton">
       <property name="enabled">
        <bool>true</bool>
+      </property>
+      <property name="toolTip">
+       <string>Запустити процес генерації часових рядів на основі поточної конфігурації та параметрів.</string>
       </property>
       <property name="text">
        <string>Згенерувати часовий ряд</string>
@@ -163,6 +196,9 @@
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="1" column="0">
         <widget class="QLabel" name="startTimeLabel">
+         <property name="toolTip">
+          <string>Дата та час, з якого почнеться генерація часового ряду.</string>
+         </property>
          <property name="text">
           <string>Дата та час початку:</string>
          </property>
@@ -170,6 +206,9 @@
        </item>
        <item row="3" column="1">
         <widget class="QSpinBox" name="stepSpinBox">
+         <property name="toolTip">
+          <string>Інтервал у секундах між послідовними точками даних у часовому ряді.</string>
+         </property>
          <property name="minimum">
           <number>1</number>
          </property>
@@ -183,6 +222,9 @@
        </item>
        <item row="1" column="1">
         <widget class="QDateTimeEdit" name="startDateTimeEdit">
+         <property name="toolTip">
+          <string>Виберіть дату та час початку генерації часового ряду.</string>
+         </property>
          <property name="dateTime">
           <datetime>
            <hour>0</hour>
@@ -200,6 +242,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="endTimeLabel">
+         <property name="toolTip">
+          <string>Дата та час, до якого буде тривати генерація часового ряду.</string>
+         </property>
          <property name="text">
           <string>Дата та час кінця:</string>
          </property>
@@ -207,6 +252,9 @@
        </item>
        <item row="2" column="1">
         <widget class="QDateTimeEdit" name="endDateTimeEdit">
+         <property name="toolTip">
+          <string>Виберіть дату та час закінчення генерації часового ряду.</string>
+         </property>
          <property name="dateTime">
           <datetime>
            <hour>1</hour>
@@ -224,6 +272,9 @@
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="stepLabel">
+         <property name="toolTip">
+          <string>Інтервал між точками даних у згенерованому часовому ряді (у секундах).</string>
+         </property>
          <property name="text">
           <string>Часовий крок (секунди):</string>
          </property>
@@ -231,6 +282,9 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_2">
+         <property name="toolTip">
+          <string>Кількість дискретних станів, які використовуватимуться в моделі Маркова для імітації навантаження.</string>
+         </property>
          <property name="text">
           <string>Кількість станів навантаження:</string>
          </property>
@@ -238,16 +292,25 @@
        </item>
        <item row="0" column="1">
         <widget class="QSpinBox" name="statesSpinBox">
+         <property name="toolTip">
+          <string>Вкажіть кількість станів навантаження (від 3 до 20).</string>
+         </property>
          <property name="minimum">
           <number>3</number>
          </property>
          <property name="maximum">
           <number>20</number>
          </property>
+         <property name="value">
+          <number>4</number>
+         </property>
         </widget>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="microservicesCountLabel">
+         <property name="toolTip">
+          <string>Кількість часових рядів, які будуть згенеровані для імітації окремих мікросервісів.</string>
+         </property>
          <property name="text">
           <string>Кількість мікросервісів:</string>
          </property>
@@ -255,6 +318,9 @@
        </item>
        <item row="4" column="1">
         <widget class="QSpinBox" name="microservicesCountSpinBox">
+         <property name="toolTip">
+          <string>Вкажіть кількість мікросервісів, для яких потрібно згенерувати часові ряди (від 1 до 100).</string>
+         </property>
          <property name="minimum">
           <number>1</number>
          </property>
@@ -304,15 +370,24 @@
    <property name="text">
     <string>Зберегти як...</string>
    </property>
+   <property name="toolTip">
+    <string>Зберегти згенеровані часові ряди у файл.</string>
+   </property>
   </action>
   <action name="actionQuit">
    <property name="text">
     <string>Вихід</string>
    </property>
+   <property name="toolTip">
+    <string>Закрити програму.</string>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>Про програму</string>
+   </property>
+   <property name="toolTip">
+    <string>Інформація про програму.</string>
    </property>
   </action>
  </widget>
@@ -361,40 +436,8 @@
      <y>80</y>
     </hint>
     <hint type="destinationlabel">
-     <x>760</x>
-     <y>93</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chooseConfigRadioButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>configPathLineEdit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>124</x>
-     <y>88</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>284</x>
-     <y>89</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chooseDatasetRadioButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>plotDatasetButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>59</x>
-     <y>120</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>727</x>
-     <y>121</y>
+     <x>20</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>

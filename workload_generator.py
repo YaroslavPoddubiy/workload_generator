@@ -89,21 +89,8 @@ class MarkovChain:
             for i in range(len(transition_count[key])):
                 self.prepare_count_matrix(transition_count)
                 state_count_sum = sum(transition_count[key][i])
-
-                # якщо переходів з певного стану не відбувалося, ймовірності переходів в різні стани будуть однакові
-                # if state_count_sum == 0:
-                #     for j in range(len(transition_count[key][i])):
-                #         self.__transition_matrix[key][i][j] = 1 / self.__states
-                #     multiplier = 1 / self.__states
-                # else:
-                #     multiplier = 1 / state_count_sum
                 multiplier = 1 / state_count_sum
                 for j in range(len(transition_count[key][i]) - 1):
-                    # якщо переходів з одного стану в певний інший не відбувалося, то ставимо мінімальну ймовірність
-                    # if transition_count[key][i][j] == 0:
-                    #     self.__transition_matrix[key][i][j] = 0.01
-                    # else:
-                    #     self.__transition_matrix[key][i][j] = multiplier * transition_count[key][i][j]
                     self.__transition_matrix[key][i][j] = multiplier * transition_count[key][i][j]
                 self.__transition_matrix[key][i][-1] = 1 - sum(self.__transition_matrix[key][i])
 
@@ -117,26 +104,37 @@ class MarkovChain:
             json_transition_matrix[key] = transition_matrix[key].tolist()
         return json_transition_matrix
 
+    def set_states(self, states):
+        if not isinstance(states, int):
+            raise TypeError("states must be an integer")
+        if states < 1 or states > 20:
+            raise ValueError("states must be between 1 and 20")
+        self.__states = states
+        self.__transition_matrix = {
+            "CPU": np.zeros((states, states)),
+            "Memory": np.zeros((states, states)),
+            "Network": np.zeros((states, states)),
+        }
+
     def save_config(self, dataset_path):
         json_data = {"DatasetPath": dataset_path, "MarkovChain": self.prepare_config_to_json(self.__transition_matrix)}
         with open("config.json", "w", encoding='utf-8') as f:
             json.dump(json_data, f, ensure_ascii=False)
 
-    def config_is_correct(self, dataset):
-        if len(dataset["CPU"]) != len(self.__transition_matrix["CPU"]) or \
-                len(dataset["Memory"]) != len(self.__transition_matrix["Memory"]) or \
-                len(dataset["Network"]) != len(self.__transition_matrix["Network"]):
-            return False
+    def check_config(self, dataset):
+        if len(dataset["CPU"]) != self.__states or \
+                len(dataset["Memory"]) != self.__states or \
+                len(dataset["Network"]) != self.__states:
+            raise ValueError("Неправильна конфігурація. Розмір матриці має бути рівним кількості станів")
         for i in range(len(dataset["CPU"])):
-            if len(dataset["CPU"][i]) != len(self.__transition_matrix["CPU"][i]) or \
-                    len(dataset["Memory"][i]) != len(self.__transition_matrix["Memory"][i]) or \
-                    len(dataset["Network"][i]) != len(self.__transition_matrix["Network"][i]):
-                return False
+            if len(dataset["CPU"][i]) != self.__states or \
+                    len(dataset["Memory"][i]) != self.__states or \
+                    len(dataset["Network"][i]) != self.__states:
+                raise ValueError("Неправильна конфігурація. Матриці мають бути квадратними.")
         for key in dataset:
             for state_probabilities in dataset[key]:
                 if sum(state_probabilities) != 1:
-                    return False
-        return True
+                    raise ValueError('Неправильна конфігурація. Сума ймовірностей кожного рядка повинна бути рівною 1.')
 
     def load_config(self, path="config.json"):
         if not os.path.isfile(path):
@@ -144,20 +142,21 @@ class MarkovChain:
         with open(path, "r", encoding='UTF-8') as f:
             json_data = json.load(f)
             json_data = json_data["MarkovChain"]
-            if not self.config_is_correct(json_data):
-                raise ValueError("Invalid configuration")
+            try:
+                self.check_config(json_data)
+            except ValueError as e:
+                raise ValueError(str(e))
             self.__transition_matrix = json_data
             self.__is_configured = True
 
     def __generate_timeseries(self, from_timestamp, to_timestamp, step=1000):
         first_state = np.random.randint(0, self.__states)
-        steps = int((to_timestamp - from_timestamp) / step)
         timeseries = {"Timestamp": [from_timestamp], "CPU": [first_state], "Memory": [first_state],
                              "Network": [first_state]}
         current_states = (first_state, first_state, first_state)
 
-        for i in range(1, steps):
-            timeseries['Timestamp'].append(i * step + from_timestamp)
+        for timestamp in range(from_timestamp, to_timestamp + 1, step):
+            timeseries['Timestamp'].append(timestamp)
 
             next_cpu_state = np.random.choice(self.__states, p=self.__transition_matrix['CPU'][current_states[0]])
             timeseries['CPU'].append(
@@ -195,38 +194,32 @@ class MarkovChain:
                     writer.writerow([timeseries['Timestamp'][i], timeseries['CPU'][i], timeseries['Memory'][i], timeseries['Network'][i]])
 
     def show_plot(self, index):
-        # Create DataFrame
         if index < 0 or index >= len(self.__timeseries):
             raise IndexError("Index out of range")
         df = pd.DataFrame(self.__timeseries[index])
-
+# TODO тут неправильно переводиться час по utc
         df['Timestamp'] = pd.to_datetime(df['Timestamp'], unit='s')
 
-        # Create subplots
         fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(12, 10), sharex=True)
         fig.suptitle('Time Series of Individual Parameters')
 
-        # Plot CPU usage
-        axes[0].plot(df['Timestamp'], df['CPU'], label='CPU', marker='o', linestyle='-')
-        axes[0].set_ylabel('CPU Usage (%)')  # Adjust y-axis label
+        axes[0].plot(df['Timestamp'], df['CPU'], label='CPU', marker='o', linestyle='-', linewidth=0.5, markersize=3)
+        axes[0].set_ylabel('CPU Usage (%)')
         axes[0].legend()
         axes[0].grid(True)
 
-        # Plot Memory usage
-        axes[1].plot(df['Timestamp'], df['Memory'], label='Memory', marker='o', linestyle='-')
-        axes[1].set_ylabel('Memory Usage (%)')  # Adjust y-axis label
+        axes[1].plot(df['Timestamp'], df['Memory'], label='Memory', marker='o', linestyle='-', linewidth=0.5, markersize=3)
+        axes[1].set_ylabel('Memory Usage (%)')
         axes[1].legend()
         axes[1].grid(True)
 
-        # Plot Network usage
-        axes[2].plot(df['Timestamp'], df['Network'], label='Network', marker='o', linestyle='-')
-        axes[2].set_ylabel('Network Usage (units)')  # Adjust y-axis label
+        axes[2].plot(df['Timestamp'], df['Network'], label='Network', marker='o', linestyle='-', linewidth=0.5, markersize=3)
+        axes[2].set_ylabel('Network Usage (units)')
         axes[2].set_xlabel('Timestamp')
         axes[2].legend()
         axes[2].grid(True)
-        # axes[2].tick_params(axis='x', rotation=45, ha='right')
 
-        plt.tight_layout(rect=(0.0, 0.03, 1.0, 0.95))  # Adjust layout to prevent overlap and make space for suptitle
+        plt.tight_layout(rect=(0.0, 0.03, 1.0, 0.95))
         plt.show()
 
     def __str__(self):
